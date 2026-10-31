@@ -13,7 +13,7 @@
 🔭 &nbsp;I'm currently working on **a small pokemon discord game**  
 🌱 &nbsp;I'm currently learning **Machine learning**  
 😄 &nbsp;Pronouns: **he/him**  
-⚡ &nbsp;Fun fact: **i am an anime lover**
+⚡ &nbsp;Fun fact: **i am an anime lover :)**
 
 ### 🛠️ Tech Stack
 
