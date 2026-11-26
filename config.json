@@ -1,0 +1,6 @@
+{
+  "login": "iTsukiyomi",
+  "displayName": "MEET RATHOD",
+  "links": { "GitHub": "https://github.com/iTsukiyomi", "Portfolio": "https://itsukiyomi.github.io/portfolio" },
+  "weather": { "enabled": false, "lat": 19.07, "lon": 72.87, "label": "Mumbai" }
+}
