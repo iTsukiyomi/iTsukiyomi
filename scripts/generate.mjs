@@ -40,7 +40,15 @@ async function load() {
   const ev = await (await fetch(`https://api.github.com/users/${cfg.login}/events/public?per_page=50`, { headers: h })).json();
   const commits = [];
   for (const e of Array.isArray(ev) ? ev : []) if (e.type === "PushEvent") for (const c of [...(e.payload.commits || [])].reverse())
-    if (commits.length < 8) commits.push([e.repo.name.split("/")[1], c.sha.slice(0, 7), c.message.split("\n")[0]]);
+    if (commits.length < 12) commits.push([e.repo.name.split("/")[1], c.sha.slice(0, 7), c.message.split("\n")[0]]);
+  if (commits.length < 10) try {
+    const repos = await (await fetch(`https://api.github.com/users/${cfg.login}/repos?sort=pushed&per_page=6`, { headers: h })).json();
+    for (const r of Array.isArray(repos) ? repos : []) {
+      const cs = await (await fetch(`https://api.github.com/repos/${r.full_name}/commits?author=${cfg.login}&per_page=5`, { headers: h })).json();
+      for (const c of Array.isArray(cs) ? cs : []) { const sha = c.sha.slice(0, 7);
+        if (commits.length < 12 && !commits.some(x => x[1] === sha)) commits.push([r.name, sha, c.commit.message.split("\n")[0]]); }
+    }
+  } catch {}
   let weather = null;
   if (cfg.weather.enabled) try {
     const w = await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${cfg.weather.lat}&longitude=${cfg.weather.lon}&current=weather_code`)).json();
@@ -73,7 +81,9 @@ function banner(d) {
   const { user, commits, weather } = d;
   const W = 860, H = 420, LH = 15, shown = commits.length ? commits : null;
   const lines = shown ? shown.map(([r, s, m]) => `${s} ${cut(r + ": " + m, 38)}`) : ["no recent public commits"];
-  const loop = lines.length * LH, scroll = lines.length > 5;
+  while (lines.length < 6) lines.push("");
+  lines.push("");
+  const loop = lines.length * LH, scroll = true;
   const list = (off) => lines.map((l, i) => `<text x="0" y="${off + i * LH}" fill="#d6e4ff" font-size="10.5" class="mono">${esc(l)}</text>`).join("");
   const langs = [...new Map(user.repositories.nodes.flatMap(r => r.languages.nodes).map(l => [l.name, l.color])).entries()].slice(0, 6);
   const books = langs.map(([n, c], i) => `<rect x="${620 + i * 17}" y="${118 - (i % 3) * 5}" width="14" height="${34 + (i % 3) * 5}" fill="${c || "#888"}"><title>${esc(n)}</title></rect>`).join("");
@@ -101,8 +111,8 @@ function banner(d) {
   <rect x="280" y="188" width="320" height="100" rx="4" fill="#232a3a" stroke="#3b4458" stroke-width="4"/>
   <rect x="290" y="198" width="300" height="82" fill="#081027"/>
   <text x="298" y="214" fill="#4ade80" font-size="10.5" class="mono">$ git log --oneline</text>
-  <g clip-path="url(#scr)"><g transform="translate(298,232)">${list(0)}${scroll ? list(loop) : ""}
-    ${scroll ? `<animateTransform attributeName="transform" type="translate" values="298,232;298,${232 - loop}" dur="${lines.length * 2.2}s" repeatCount="indefinite"/>` : ""}</g></g>
+  <g clip-path="url(#scr)"><g transform="translate(298,232)">${list(0)}${list(loop)}
+    <animateTransform attributeName="transform" type="translate" from="298 232" to="298 ${232 - loop}" dur="${lines.length * 1.4}s" repeatCount="indefinite"/></g></g>
   <rect x="428" y="288" width="24" height="22" fill="#2a3144"/><rect x="400" y="306" width="80" height="6" fill="#2a3144"/>
   <rect x="150" y="300" width="470" height="12" fill="#7a4a28"/><rect x="170" y="312" width="12" height="18" fill="#5a3418"/><rect x="590" y="312" width="12" height="18" fill="#5a3418"/>
   <rect x="640" y="296" width="16" height="12" fill="#e8e4da"/>
@@ -189,4 +199,3 @@ ${links}
 <img src="assets/activity.svg" alt="activity" width="100%"/>
 `);
 console.log("generated");
-                                                                                      
