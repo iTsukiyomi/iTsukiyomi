@@ -79,12 +79,12 @@ const svg = (w, h, body, extra = "") => `<svg xmlns="http://www.w3.org/2000/svg"
 // ---------- banner ----------
 function banner(d) {
   const { user, commits, weather } = d;
-  const W = 860, H = 420, LH = 15, shown = commits.length ? commits : null;
-  const lines = shown ? shown.map(([r, s, m]) => `${s} ${cut(r + ": " + m, 38)}`) : ["no recent public commits"];
+  const W = 860, H = 420, LH = 13, shown = commits.length ? commits : null;
+  const lines = shown ? shown.map(([r, s, m]) => `${s} ${cut(r + ": " + m, 46)}`) : ["no recent public commits"];
   while (lines.length < 6) lines.push("");
   lines.push("");
   const loop = lines.length * LH, scroll = true;
-  const list = (off) => lines.map((l, i) => `<text x="0" y="${off + i * LH}" fill="#d6e4ff" font-size="10.5" class="mono">${esc(l)}</text>`).join("");
+  const list = (off) => lines.map((l, i) => `<text x="0" y="${off + i * LH}" fill="#4ade80" font-size="9" class="mono">${esc(l)}</text>`).join("");
   const langs = [...new Map(user.repositories.nodes.flatMap(r => r.languages.nodes).map(l => [l.name, l.color])).entries()].slice(0, 6);
   const books = langs.map(([n, c], i) => `<rect x="${620 + i * 17}" y="${118 - (i % 3) * 5}" width="14" height="${34 + (i % 3) * 5}" fill="${c || "#888"}"><title>${esc(n)}</title></rect>`).join("");
   const stars = [[60, 55], [110, 80], [170, 50], [190, 120], [80, 130], [140, 105]].map(([x, y], i) =>
@@ -110,9 +110,8 @@ function banner(d) {
   <rect x="610" y="228" width="140" height="8" fill="#5a3b22"/><rect x="622" y="214" width="8" height="14" fill="#e8b923"/><rect x="640" y="210" width="8" height="18" fill="#e8b923"/><rect x="658" y="214" width="8" height="14" fill="#e8b923"/>
   <rect x="280" y="188" width="320" height="100" rx="4" fill="#232a3a" stroke="#3b4458" stroke-width="4"/>
   <rect x="290" y="198" width="300" height="82" fill="#081027"/>
-  <text x="298" y="214" fill="#4ade80" font-size="10.5" class="mono">$ git log --oneline</text>
-  <g clip-path="url(#scr)"><g transform="translate(298,232)">${list(0)}${list(loop)}
-    <animateTransform attributeName="transform" type="translate" from="298 232" to="298 ${232 - loop}" dur="${lines.length * 1.4}s" repeatCount="indefinite"/></g></g>
+  <g clip-path="url(#scr)"><g transform="translate(298,214)">${list(0)}${list(loop)}
+    <animateTransform attributeName="transform" type="translate" from="298 214" to="298 ${214 - loop}" dur="${lines.length * 2.6}s" repeatCount="indefinite"/></g></g>
   <rect x="428" y="288" width="24" height="22" fill="#2a3144"/><rect x="400" y="306" width="80" height="6" fill="#2a3144"/>
   <rect x="150" y="300" width="470" height="12" fill="#7a4a28"/><rect x="170" y="312" width="12" height="18" fill="#5a3418"/><rect x="590" y="312" width="12" height="18" fill="#5a3418"/>
   <rect x="640" y="296" width="16" height="12" fill="#e8e4da"/>
