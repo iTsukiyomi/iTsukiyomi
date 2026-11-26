@@ -1,22 +1,41 @@
 name: Update profile README
+
 on:
-  schedule: [{ cron: "0 * * * *" }]
+  schedule:
+    - cron: "0 * * * *"
   workflow_dispatch:
-  push: { branches: [main] }
-permissions: { contents: write }
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: npm install
-      - run: node scripts/generate.mjs
-        env: { GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }} }
-      - run: |
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Generate README and assets
+        run: node scripts/generate.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROFILE_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Commit changes
+        run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || (git commit -m "chore: refresh profile" && git push)
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh profile"
+            git push
+          fi
           
