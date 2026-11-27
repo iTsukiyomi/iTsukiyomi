@@ -1,6 +1,6 @@
 <img src="assets/banner.svg" alt="MEET RATHOD room" width="100%"/>
 
-The monitor scrolls my latest public commits; the shelf holds a book for each language I write.
+The monitor scrolls my latest public commits.
 
 [GitHub](https://github.com/iTsukiyomi) · [Portfolio](https://itsukiyomi.github.io/portfolio)
 
